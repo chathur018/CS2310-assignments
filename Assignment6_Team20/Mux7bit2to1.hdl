@@ -1,0 +1,48 @@
+/*
+*It takes 2 7-bit buses and 1 select line
+*It gives a single 7-bit output based on select lines
+*/
+
+CHIP Mux7bit2to1{
+    IN s, x0[7], x1[7];
+    OUT out[7];
+
+    PARTS:
+
+    Not(in=s, out=nots);
+
+//output = s'.x0 + s.x1 (x0,x1 denote 8-bit buses)
+//output = a0 + a1
+//where a0 represents a00=s'.x0[0], a01=s'.x0[1]....a07=s'.x0[7]
+//where a1 represents a10=s'.x1[0], a11=s'.x1[1]....a17=s'.x1[7]
+    And(a=nots, b=x0[0], out=a00);
+    And(a=s, b=x1[0], out=a10);
+
+    And(a=nots, b=x0[1], out=a01);
+    And(a=s, b=x1[1], out=a11);
+
+    And(a=nots, b=x0[2], out=a02);
+    And(a=s, b=x1[2], out=a12);
+
+    And(a=nots, b=x0[3], out=a03);
+    And(a=s, b=x1[3], out=a13);
+
+    And(a=nots, b=x0[4], out=a04);
+    And(a=s, b=x1[4], out=a14);
+
+    And(a=nots, b=x0[5], out=a05);
+    And(a=s, b=x1[5], out=a15);
+
+    And(a=nots, b=x0[6], out=a06);
+    And(a=s, b=x1[6], out=a16);
+
+//output = a0 + a1   (all are 7-bit buses)
+//out[i] = a_0i + a_1i (General output bit)
+    Or(a=a00, b=a10, out=out[0]);
+    Or(a=a01, b=a11, out=out[1]);
+    Or(a=a02, b=a12, out=out[2]);
+    Or(a=a03, b=a13, out=out[3]);
+    Or(a=a04, b=a14, out=out[4]);
+    Or(a=a05, b=a15, out=out[5]);
+    Or(a=a06, b=a16, out=out[6]);
+}

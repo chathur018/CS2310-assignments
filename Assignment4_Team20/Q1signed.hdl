@@ -1,0 +1,56 @@
+/*
+*8-bit Wallace signed multiplier
+*Inputs-two 8-bit signed integers--x,y
+*Output-product of 2 inputs x&y 8 bit signed integer--out and overflow variable OF
+*/
+
+CHIP Q1signed{
+    IN x[8],y[8];
+    OUT out[8];
+
+    PARTS:
+
+    Not(in=y[0], out=noty);
+    And(a=y[0], b=noty, out=false);
+//false is zero bit    
+
+    signedPP0generator(x=x, y=y[0], out=pp0);
+    signedPP1generator(x=x, y=y[1], out=pp1);
+    signedPP2generator(x=x, y=y[2], out=pp2);
+    signedPP3generator(x=x, y=y[3], out=pp3);
+    signedPP4generator(x=x, y=y[4], out=pp4);
+    signedPP5generator(x=x, y=y[5], out=pp5);
+    signedPP6generator(x=x, y=y[6], out=pp6);
+    signedPP7generator(x=x, y=y[7], out=notcomplementedpp7);
+    Onescomplement(in=notcomplementedpp7, out=pp7);
+    signedPP8generator(y=y[0], out=pp8);
+//signedPP8generator is a 1 bit adder to pp7 to convert it into -pp7
+
+//lvl 1 : (pp0,pp1,pp2) -> (c10,s10)
+//        (pp3,pp4,pp5) -> (c11,s11)
+//        (pp6,pp7,pp8) -> (c12,s12)
+    Reducer3to2(p=pp0, q=pp1, r=pp2, c=c10, s=s10);
+    Reducer3to2(p=pp3, q=pp4, r=pp5, c=c11, s=s11);
+    Reducer3to2(p=pp6, q=pp7, r=pp8, c=c12, s=s12);
+
+//lvl 2 : (c10,s10,c11) -> (c20,s20)
+//        (s11,c12,s12) -> (c21,s21)
+    Reducer3to2(p=c10, q=s10, r=c11, c=c20, s=s20);
+    Reducer3to2(p=s11, q=c12, r=s12, c=c21, s=s21);
+
+//lvl 3 : (c20,s20,c21) -> (c30,s30)
+    Reducer3to2(p=c20, q=s20, r=c21, c=c30, s=s30);
+
+//lvl 4 : (c30,s30,s21) -> (c40,s40)
+    Reducer3to2(p=c30, q=s30, r=s21, c=c40, s=s40);
+
+//CLAadder is exactly same as week 3 assignment q3, 
+//here false is sent to do addition
+//out1 is our final answer of 8-bit
+//of is 8-bit which is of P(n),P(n+1)...P(2n-1) (n=8)
+//of is used to calculate overflow bit
+    CLAadder(x0=c40, y0=s40, a=false, out1=out, out2=of);
+
+//Overflow chip takes of(8-bit) as input and gives the OF(overflow) bit   
+    Overflow(a=x[7], b=y[7], P=of, OF=OF);
+}

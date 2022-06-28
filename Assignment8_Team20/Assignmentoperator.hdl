@@ -1,0 +1,13 @@
+/*
+*Takes input-bit(in) and assigns it to output-bit(out) 
+*/
+
+CHIP Assignmentoperator{
+    IN in;
+    OUT out;
+
+    PARTS:
+    
+    Not(in=in,out=notin);
+    Not(in=notin,out=out);
+}

@@ -1,0 +1,26 @@
+/**
+*LogicUnit8bit 
+*It takes c1 and c0 opcode in s
+*It performs the logical operations like AND,OR,XOR on 2 (8-bit) inputs
+*Depending upon op gives the output using Mux8bit4to1 chip
+*c1=0, c0=0 -->NOP
+*c1=0, c0=1 -->AND
+*c1=1, c0=0 -->OR
+*c1=1, c0=1 -->XOR
+*/
+
+CHIP LogicUnit8bit{
+    IN s[2], x[8], y[8];
+    OUT out[8];
+
+    PARTS:
+
+    LogicalAnd8bit(x=x, y=y, out=and);
+    LogicalOr8bit(x=x, y=y, out=or);
+    LogicalXor8bit(x=x, y=y, out=xor);
+
+//and denotes output after performing AND operation (passed to x1)
+//or denotes output after performing OR operation (passed to x2)
+//xor denotes output after performing XOR operation (passed to x3)
+    Mux8bit4to1(s=s, x0=false, x1=and, x2=or, x3=xor, out=out);
+}

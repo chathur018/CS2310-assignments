@@ -1,0 +1,19 @@
+/*
+*And operation with fan-in parameter 8
+*/
+
+CHIP And8{
+    IN a, b, c, d, e, f, g, h;
+    OUT out;
+
+    PARTS:
+    And(a=a, b=b, out=o1);
+    And(a=c, b=d, out=o2);
+    And(a=e, b=f, out=o3);
+    And(a=g, b=h, out=o4);
+  
+    And(a=o1, b=o2, out=w1);
+    And(a=o3, b=o4, out=w2);
+
+    And(a=w1, b=w2, out=out);
+}

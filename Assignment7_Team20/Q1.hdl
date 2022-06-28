@@ -1,0 +1,72 @@
+/*
+*HACK-ALU 16 bit
+*/
+
+CHIP Q1{
+    IN x[16], y[16],zx,zy,nx,ny,f,no;
+    OUT out[16],zr,ng;
+
+    PARTS:
+
+//zx=1, 0 input(16-bit) should be taken instead of x
+//zy=1, 0 input(16-bit) should be taken instead of y
+    Mux16bit2to1(s=zx, x0=x, x1=false, out=a);
+    Mux16bit2to1(s=zy, x0=y, x1=false, out=b);
+
+//nx=1, a becomes onescomplement  //ny=1, b becomes onescomplement
+//nx=0, a remains same            //ny=0, b remains same
+    XorWithKey(x=a, y=nx, out=p);
+    XorWithKey(x=b, y=ny, out=q);
+
+//(a = false) in CLAadder is used for addition
+//add = p+q
+//and = p&q
+    CLAadder(x0=p, y0=q, a=false, out=add);
+    LogicalAnd16bit(x=p, y=q, out=and);
+
+//s=0 --> and is taken as r
+//s=1 --> add is taken as r
+    Mux16bit2to1(s=f, x0=and, x1=add, out=r);
+
+//out = r^no
+    XorWithKey(x=r, y=no, out=z);
+    Assignmentoperator16(in=z, out=out);
+
+    Statusbit(in=z, zr=zr, ng=ng);
+}
+
+/*
+    ~ and ! represents ones complement
+                              ALU_TRUTH_TABLE
+    test    zx  nx  zy  ny  f   no  out     p   q   f   no
+    1       1   0   1   0   1   0   0       0   0   +
+    2       1   1   1   1   1   1   1       -1  -1  +   !
+    3       1   1   1   0   1   0   -1      -1  0   +
+    4       0   0   1   1   0   0   x       x   -1  &
+    5       1   1   0   0   0   0   y       -1  y   &
+    6       0   0   1   1   0   1   ~x      x   -1  &   !
+    7       1   1   0   0   0   1   ~y      -1  y   &   !   
+    8       0   0   1   1   1   1   -x      x   -1  +   !
+    9       1   1   0   0   1   1   -y      -1  y   +   !  
+    10      0   1   1   1   1   1   x+1     ~x  -1  +   !
+    11      1   1   0   1   1   1   y+1     -1  ~y  +   !
+    12      0   0   1   1   1   0   x-1     x   -1  +
+    13      1   1   0   0   1   0   y-1     -1  y   +
+    14      0   0   0   0   1   0   x+y     x   y   +
+    15      0   1   0   0   1   1   x-y     ~x  y   +   !
+    16      0   0   0   1   1   1   y-x     x   ~y  +   !
+    17      0   0   0   0   0   0   x&y     x   y   &
+    18      0   1   0   1   0   1   x/y     ~x  ~y  &   !
+
+   | zx  nx |  p  |        | zy  ny |  q  |    
+   | 0   0  |  x  |        | 0   0  |  y  |
+   | 0   1  | ~x  |        | 0   1  | ~y  |
+   | 1   0  |  0  |        | 1   0  |  0  |
+   | 1   1  | -1  |        | 1   1  | -1  |
+
+   | f  n0  |  out   |          
+   | 0   0  |  p&q   |  
+   | 0   1  | ~(p&q) |
+   | 1   0  |  p+q   |
+   | 1   1  | ~(p+q) |
+*/

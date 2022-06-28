@@ -1,0 +1,45 @@
+/**
+*Program Counter
+*It manages the memory instruction to be executed next
+*r resets the counter
+*For a non-jump intruction or a jump intruction whose conditions are not met
+*out(t) = out(t-1) + 1
+*For a jump instruction whose conditions are met
+*out(t) = in(t)
+*/
+
+CHIP ProgramCounter{
+    IN in[16], instruction[16], zr, ng, r;
+    OUT out[16];
+
+    PARTS:
+    Not(in=instruction[0], out=n0);
+    Not(in=instruction[1], out=n1);
+    Not(in=instruction[2], out=n2);
+    Not(in=zr , out= nzr);
+    Not(in=ng , out= nng);
+
+//p0 = I[0].I[1].I[2]
+    And4(a= instruction[0], b= instruction[1], c= instruction[2], d= true, out= p0);
+//p1 = I[0].~I[1].~I[2].~zr.~ng
+    And5(a= instruction[0], b= n1, c= n2, d= nzr, e= nng, out= p1);
+//p2 = ~I[0].I[1].~I[2].zr
+    And4(a= n0, b= instruction[1], c= n2, d= zr, out= p2);
+//p3 = I[0].I[1].~I[2].~ng
+    And4(a= instruction[0], b= instruction[1], c= n2, d= nng, out= p3);
+//p4 = ~I[0].~I[1].I[2].~zr.ng
+    And5(a= n0, b= n1, c= instruction[2], d= nzr, e= ng, out= p4);
+//p5 = I[0].~I[1].I[2].~zr
+    And4(a= instruction[0], b= n1, c= instruction[2], d= nzr, out= p5);
+//p6 = ~I[0].I[1].I[2].ng
+    And4(a= n0, b= instruction[1], c= instruction[2], d= ng, out= p6);
+
+//p8 = p0 + p1 + p2 + p3 + p4 + p5 + p6
+    Or8(a=p0, b=p1, c=p2, d=p3, e=p4, f=p5, g=p6, h=false, out=p8);
+
+//j = p8.I[15]
+    And(a=p8, b=instruction[15], out=j);
+
+//Inbuilt PC chip with appropriate inputs and outputs
+    PC(in=in, load=j, inc=true, reset=r, out=out);
+}

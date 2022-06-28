@@ -1,0 +1,27 @@
+/**
+*F(W,X,Y,Z) = $m(1,3,4,7,8,9,10,11) + $d(6,12,13,14,15)
+*MSOP = W'X'Z + XZ' + WZ' + YZ
+*MSOP = Z'(X+W) + Z(W'X'+Y)
+*MSOP = Z'(x'W')' + Z((W'X')'Y')'
+*MSOP = ((Z'(x'W')')'(Z((W'X')'Y')')')'
+*/
+
+CHIP Q1b {
+    IN w,x,y,z;
+    OUT out;
+    
+    PARTS:
+    Nand(a=w, b=w, out=notw);
+    Nand(a=x, b=x, out=notx);
+    Nand(a=y, b=y, out=noty);
+    Nand(a=z, b=z, out=notz);
+
+    Nand(a=notx, b=notw, out=o1);
+    Nand(a=notz, b=o1, out=o2);
+
+    Nand(a=notw, b=notx, out=o3);
+    Nand(a=noty, b=o3, out=o4);
+    Nand(a=z, b=o4, out=o5);
+
+    Nand(a=o2, b=o5, out=out);
+}

@@ -1,0 +1,35 @@
+/*
+*Takes the bits of P(n),P(n+1)....P(2n-1) and computes the overflow
+*here n=8
+*/
+
+CHIP Overflow{
+    IN a,b,P[8];
+    OUT OF;
+
+    PARTS:
+// m1 = P[0]+P[1]....P[7]       (P(n)+P(n+1)+P(n+2)....P(2n-1))
+
+// m2 = Not(P[0].P[1].P[2].P[3].P[4].P[5].P[6].P[7])
+// m2 = (P'(n)+P'(n+1)+P'(n+2)....P'(2n-1))
+// m2 = Not(P(n).P(n+1).P(n+2)....P(2n-1))        ( From Demorgan's law )
+// m2 = Not(notm2)
+
+    Or8(a=P[0], b=P[1], c=P[2], d=P[3], e=P[4], f=P[5], g=P[6], h=P[7], out=m1);
+    And8(a=P[0], b=P[1], c=P[2], d=P[3], e=P[4], f=P[5], g=P[6], h=P[7], out=notm2);
+    Not(in=notm2, out=m2);
+
+//u2 = a Xor b  = a^b
+//u1 = a Xnor b = !(a^b)
+//u1 = Not(u2)
+    Xor(a=a, b=b, out=u2);
+    Not(in=u2, out=u1);
+
+//OF = (x[7]^y[7]).(P(n)+P(n+1)...P(2n-1)) + (!(x[7]^y[7])).(P'(n)+P'(n+1)...P'(2n-1))
+//OF = (a^b).m1 + (!(a^b)).m2
+//OF = u1.m1 + u2.m2
+//OF =  a1   +   a2
+    And(a=u1, b=m1, out=a1);
+    And(a=u2, b=m2, out=a2);
+    Or(a=a1, b=a2, out=OF);
+}

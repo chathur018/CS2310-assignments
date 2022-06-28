@@ -1,0 +1,13 @@
+/*
+*Or operation with fan-in parameter 4
+*/
+
+CHIP Or4{
+    IN a, b, c, d;
+    OUT out;
+
+    PARTS:
+    Or(a=a, b=b, out=o1);
+    Or(a=c, b=d, out=o2);
+    Or(a=o1, b=o2, out=out);
+}

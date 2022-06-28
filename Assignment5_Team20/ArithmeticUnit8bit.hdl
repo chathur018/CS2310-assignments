@@ -1,0 +1,41 @@
+/*
+*ArithmeticUnit8bit 
+*It takes c1 and c0 opcode in s
+*It takes u/s(signed or unsigned) in c
+*It performs the arithmetic operations like ADD,SUB,multiplication on 2 (8-bit) inputs
+*Depending upon op gives the output(8-bit) and Overflow(of) using Mux8bit4to1 chip
+*c1=0, c0=0 -->ADD
+*c1=0, c0=1 -->SUB
+*c1=1, c0=0 -->UMUL
+*c1=1, c0=1 -->IMUL
+*/
+
+CHIP ArithmeticUnit8bit{
+    IN x[8], y[8], s[2], c;
+    OUT out[8], of;
+
+    PARTS:
+
+    Not(in=c, out=notc);
+
+//performs 8-bit addition and subtraction but gives output as add
+//s[0] = 0 --> addition is done
+//s[0] = 1 --> subtraction is done
+    CLAadder8bit(x0=x, y0=y, a=s[0], out=add, ofuas=ofuas, ofsas=ofsas);
+
+//performs 8-bit multiplications
+    MultiplierUnsigned(x=x, y=y, out=umul, OF=ofum);
+    MultiplierSigned(x=x, y=y, out=smul, OF=ofsm);
+
+//gives correct output corresponding to given opcode
+    Mux8bit4to1(s=s, x0=add, x1=add, x2=umul, x3=smul, out=out);
+
+//p2 = (us)'.ofuas = c'.ofuas
+//p1 = (us) .ofsas = c .ofsas
+    And(a=notc, b=ofuas, out=p2);
+    And(a=c, b=ofsas, out=p1);
+    Or(a=p2, b=p1 ,out=p0);
+
+//Gives correct overflow bit corresponding to given opcode
+    Mux1bit4to1(s=s, x0=p0, x1=p0, x2=ofum, x3=ofsm, out=of);
+}

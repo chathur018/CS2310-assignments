@@ -1,0 +1,19 @@
+/**
+*It takes 2 1-bit input and 1 select line
+*It gives a single 1-bit output based on select lines
+*/
+
+CHIP Mux1bit2to1{
+    IN s, x0, x1;
+    OUT out;
+
+    PARTS:
+
+    Not(in=s, out=nots);
+
+//out = s'.x0 + s.x1
+//out =   a0  +  a1
+    And(a=nots, b=x0, out=a0);
+    And(a=s, b=x1, out=a1);
+    Or(a=a0, b=a1, out=out);
+}

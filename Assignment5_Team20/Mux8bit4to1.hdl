@@ -1,0 +1,79 @@
+/**
+*It takes 4 8-bit buses and 2 select lines
+*It gives a single 8-bit output based on select lines
+*/
+
+CHIP Mux8bit4to1{
+    IN s[2], x0[8], x1[8], x2[8], x3[8];
+    OUT out[8];
+
+    PARTS:
+
+    Not(in=s[0], out=nots0);
+    Not(in=s[1], out=nots1);
+
+//o0 = m0 = s1'.s0'
+//o1 = m1 = s1'.s0
+//o2 = m2 = s1 .s0'
+//o3 = m3 = s1. s0
+
+    And(a=nots0, b=nots1, out=o0);
+    And(a=s[0], b=nots1, out=o1);
+    And(a=nots0, b=s[1], out=o2);
+    And(a=s[0], b=s[1], out=o3);
+
+//output = m0.x0 + m1.x1 + m2.x2 + m3.x3 (where x0,x1,x2,x3 represents entire 8-bit buses)
+//output = a0 + a1 + a2 + a3 
+//where a0 represents a00=m0.x0[0], a01=m0.x0[1]....a07=m0.x0[7]
+//where ai represents a_i0=mi.xi[0], a_i1=mi.xi[1]...a_i7=mi.xi[7]
+    And(a=o0, b=x0[0], out=a00);
+    And(a=o1, b=x1[0], out=a10);
+    And(a=o2, b=x2[0], out=a20);
+    And(a=o3, b=x3[0], out=a30);
+
+    And(a=o0, b=x0[1], out=a01);
+    And(a=o1, b=x1[1], out=a11);
+    And(a=o2, b=x2[1], out=a21);
+    And(a=o3, b=x3[1], out=a31);
+
+    And(a=o0, b=x0[2], out=a02);
+    And(a=o1, b=x1[2], out=a12);
+    And(a=o2, b=x2[2], out=a22);
+    And(a=o3, b=x3[2], out=a32);
+
+    And(a=o0, b=x0[3], out=a03);
+    And(a=o1, b=x1[3], out=a13);
+    And(a=o2, b=x2[3], out=a23);
+    And(a=o3, b=x3[3], out=a33);
+
+    And(a=o0, b=x0[4], out=a04);
+    And(a=o1, b=x1[4], out=a14);
+    And(a=o2, b=x2[4], out=a24);
+    And(a=o3, b=x3[4], out=a34);
+
+    And(a=o0, b=x0[5], out=a05);
+    And(a=o1, b=x1[5], out=a15);
+    And(a=o2, b=x2[5], out=a25);
+    And(a=o3, b=x3[5], out=a35);
+
+    And(a=o0, b=x0[6], out=a06);
+    And(a=o1, b=x1[6], out=a16);
+    And(a=o2, b=x2[6], out=a26);
+    And(a=o3, b=x3[6], out=a36);
+
+    And(a=o0, b=x0[7], out=a07);
+    And(a=o1, b=x1[7], out=a17);
+    And(a=o2, b=x2[7], out=a27);
+    And(a=o3, b=x3[7], out=a37);
+
+//output = a0 + a1 + a2 + a3   (all are 8-bit buses)
+//out[i] = a_0i + a_1i + a_2i + a_3i (General output bit)
+    Or4(a=a00, b=a10, c=a20, d=a30, out=out[0]);
+    Or4(a=a01, b=a11, c=a21, d=a31, out=out[1]);
+    Or4(a=a02, b=a12, c=a22, d=a32, out=out[2]);
+    Or4(a=a03, b=a13, c=a23, d=a33, out=out[3]);
+    Or4(a=a04, b=a14, c=a24, d=a34, out=out[4]);
+    Or4(a=a05, b=a15, c=a25, d=a35, out=out[5]);
+    Or4(a=a06, b=a16, c=a26, d=a36, out=out[6]);
+    Or4(a=a07, b=a17, c=a27, d=a37, out=out[7]);
+}

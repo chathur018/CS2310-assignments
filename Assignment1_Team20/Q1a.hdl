@@ -1,0 +1,27 @@
+/**
+*F(W,X,Y,Z) = $m(1,3,4,7,8,9,10,11) + $d(6,12,13,14,15)
+*MSOP = W'X'Z + XZ' + WZ' + YZ
+*MSOP = Z'(X+W) + Z(W'X'+Y)
+*/
+
+CHIP Q1a {
+    IN w,x,y,z;
+    OUT out;
+
+    PARTS:
+    Not(in=w, out=notw);
+    Not(in=x, out=notx);
+    Not(in=z, out=notz);
+
+//a1 == z'.(x+w) == z'.o1
+    Or(a=w, b=x, out=o1);
+    And(a=notz, b=o1, out=a1);
+
+//a3 == z.(w'x'+y) == z.(a2+y) == z.(o2)
+    And(a=notw, b=notx, out=a2);
+    Or(a=a2, b=y, out=o2);
+    And(a=o2, b=z, out=a3);
+
+//out = a1 + a3
+    Or(a=a1, b=a3, out=out);  
+}

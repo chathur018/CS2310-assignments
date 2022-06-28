@@ -1,0 +1,35 @@
+/**
+*Takes three 16 bits and generates sum and carry bit of 16 bits
+*/
+
+CHIP Reducer3to2{
+    IN p[16],q[16],r[16];
+    OUT c[16],s[16];
+
+    PARTS:
+
+   Not(in=p[0],out=notp0);
+   And(a=p[0],b=notp0,out=false);
+//false is a 0 bit
+
+    Assignmentoperator(in=false,out=c[0]);
+
+//16 full adders are used each for bit of 16 bits of 3 inputs
+    FullAdder(x=p[0], y=q[0], cin=r[0], cout=c[1], sum=s[0]);
+    FullAdder(x=p[1], y=q[1], cin=r[1], cout=c[2], sum=s[1]);
+    FullAdder(x=p[2], y=q[2], cin=r[2], cout=c[3], sum=s[2]);
+    FullAdder(x=p[3], y=q[3], cin=r[3], cout=c[4], sum=s[3]);
+    FullAdder(x=p[4], y=q[4], cin=r[4], cout=c[5], sum=s[4]);
+    FullAdder(x=p[5], y=q[5], cin=r[5], cout=c[6], sum=s[5]);
+    FullAdder(x=p[6], y=q[6], cin=r[6], cout=c[7], sum=s[6]);
+    FullAdder(x=p[7], y=q[7], cin=r[7], cout=c[8], sum=s[7]);
+    FullAdder(x=p[8], y=q[8], cin=r[8], cout=c[9], sum=s[8]);
+    FullAdder(x=p[9], y=q[9], cin=r[9], cout=c[10], sum=s[9]);
+    FullAdder(x=p[10], y=q[10], cin=r[10], cout=c[11], sum=s[10]);
+    FullAdder(x=p[11], y=q[11], cin=r[11], cout=c[12], sum=s[11]);
+    FullAdder(x=p[12], y=q[12], cin=r[12], cout=c[13], sum=s[12]);
+    FullAdder(x=p[13], y=q[13], cin=r[13], cout=c[14], sum=s[13]);
+    FullAdder(x=p[14], y=q[14], cin=r[14], cout=c[15], sum=s[14]);
+    FullAdder(x=p[15], y=q[15], cin=r[15], cout=ignore, sum=s[15]);
+//here we ignore the carry bit c16
+}

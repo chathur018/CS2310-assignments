@@ -1,0 +1,26 @@
+/*
+*It takes one 16-bit bus and generates the required status bits for HACK-ALU 16 bit
+*  zr = 1 --> out = 0
+*  zr = 0 --> out != 0
+
+*  ng = 1 --> out < 0
+*  ng = 0 --> out >= 0
+
+* in[16] bus contains our final output
+*/
+
+CHIP Statusbit{
+    IN in[16];
+    OUT zr,ng;
+
+    PARTS:
+
+//if our output starting bit(in[15]=1) --> output is negative --> ng=1
+//if our output starting bit(in[15]=0) --> output is positive --> ng=0
+    Assignmentoperator(in=in[15], out=ng);
+
+//if logical or of all output is 0(notzr) --> output is 0 --> zr=1
+//else --> output is not equal to 0(notzr=1) --> zr=0   
+    Or16(in=in, out=notzr);
+    Not(in=notzr, out=zr);
+}

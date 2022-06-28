@@ -1,0 +1,44 @@
+/*
+*ALU8bit
+*It takes 2 8-bit input buses and a 3-bit opcode
+*It generates a single 8-bit output(corresponding to specified operation) and Overflow,equality bit
+*It performs logical operations like AND,OR,XOR
+*It performs arithmetic operation like add,sub,multiplication(signed,unsigned)
+*/
+
+CHIP ALU8bit{
+    IN x[8], y[8], c[3], us;
+    OUT out[8], OF, eq;
+
+    PARTS:
+//performs logical operations like AND,OR,XOR
+    LogicUnit8bit(s=c[0..1], x=x, y=y, out=lg);
+
+//performs arithmetic operation like add,sub,multiplication(signed,unsigned)
+    ArithmeticUnit8bit(s=c[0..1], x=x, y=y, c=us, out=ar, of=of);
+
+//Equality checker
+    Comparator8bit(x=x, y=y, out=eq);
+
+//Gives correct output corresponding to input opcode c[3]
+//c[2]=0 --> lg (logical operation) --> (Overflow is not considered)
+//c[2]=1 --> ar (arithmetic operation) --> (Overflow is considered)
+    Mux8bit2to1(s=c[2], x0=lg, x1=ar, out=out);
+    Mux1bit2to1(s=c[2], x0=false, x1=of, out=OF);
+}
+
+/*
+        opcode           Operation         Output
+      c2  c1  c0           OP               out
+      0   0   0            NOP              NULL
+      0   0   1            AND              X AND Y
+      0   1   0            OR               X OR Y
+      0   1   1            XOR              X^Y
+      1   0   0            ADD              X+Y 
+      1   0   1            SUB              X-Y
+      1   1   0            UMUL             X*Y(unsigned)
+      1   1   1            IMUL             X*Y(signed)
+
+us represents U/S used in signed and unsigned addition   
+OF represents overflow.For logical operations overflow == 0.
+*/

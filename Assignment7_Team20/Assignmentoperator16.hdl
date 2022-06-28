@@ -1,0 +1,27 @@
+/*
+*Takes 16 bit input-bus(in) and assigns it to 16 bit output-bus(out) 
+*/
+
+CHIP Assignmentoperator16{
+    IN in[16];
+    OUT out[16];
+
+    PARTS:
+    
+    Assignmentoperator(in=in[0],out=out[0]);
+    Assignmentoperator(in=in[1],out=out[1]);
+    Assignmentoperator(in=in[2],out=out[2]);
+    Assignmentoperator(in=in[3],out=out[3]);
+    Assignmentoperator(in=in[4],out=out[4]);
+    Assignmentoperator(in=in[5],out=out[5]);
+    Assignmentoperator(in=in[6],out=out[6]);
+    Assignmentoperator(in=in[7],out=out[7]);
+    Assignmentoperator(in=in[8],out=out[8]);
+    Assignmentoperator(in=in[9],out=out[9]);
+    Assignmentoperator(in=in[10],out=out[10]);
+    Assignmentoperator(in=in[11],out=out[11]);
+    Assignmentoperator(in=in[12],out=out[12]);
+    Assignmentoperator(in=in[13],out=out[13]);
+    Assignmentoperator(in=in[14],out=out[14]);
+    Assignmentoperator(in=in[15],out=out[15]);
+}

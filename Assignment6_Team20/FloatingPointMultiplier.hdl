@@ -1,0 +1,36 @@
+/*
+*16-bit floating point multiplier :
+* Sign bit : 1
+* Biased Exponent: 8 bits
+* Mantissa Fraction: 7 bits
+*/
+
+CHIP FloatingPointMultiplier{
+    IN x[16], y[16];
+    OUT out[16];
+
+    PARTS:
+
+//sign bit Zs = Xs ^ Ys
+    Xor(a=x[15], b=y[15], out=out[15]);
+
+//takes Xm and Ym (mantissa bits) as inputs and gives Zm as output
+//Also gives Pm15 bit(s15) which is used in exponent calculation
+    MantissaMultiplier(x=x[0..6], y=y[0..6], out=out[0..6], s15=s15);
+
+//takes Xe and Ye(8-bits) and s15 bit and gives the corresponding Ze(8-bit) exponent
+//if s15 = 0 --> Ze = Xe + Ye - Bias
+//if s15 = 1 --> Ze = Xe + Ye - (Bias-1)
+    ExponentAdder(x=x[7..14], y=y[7..14], s15=s15, out=out[7..14]);
+}
+
+/*
+Our floating point representation
+               1-bit        8-bit                7-bit
+                ____ _______________________ __________________
+               |_Xs_|_________Xe____________|________Xm________|
+                ````````````````````````````````````````````````
+    Xs = x[15]
+    Xe = x[7..14]
+    Xm = x[0..6]              
+*/

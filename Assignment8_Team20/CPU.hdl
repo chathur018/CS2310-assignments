@@ -1,0 +1,52 @@
+/**
+*HACK CPU
+*/
+
+CHIP CPU {
+
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset==1) or continue executing
+                         // the current program (reset==0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write to M
+        addressM[14],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+
+    PARTS:
+//s1=~(I15)
+    Not(in=instruction[15], out=s1);
+
+//s2=I12.I15
+    And(a=instruction[15], b=instruction[12], out=s2);
+
+    Mux16bit2to1(s=s1, x0=out, x1=instruction, out=a1);
+
+//writeA = I(15)' + I(15).I(5)
+//writeA = I(15) + I(5)          (by elimination theorem (X+X'.Y)=X+Y)
+    Or(a=s1, b=instruction[5], out=writeA);
+    ARegister(in=a1, load=writeA, out=a2);
+
+    Mux16bit2to1(s=s2, x0=a2, x1=inM, out=y);
+
+//writeD =  I(15).d2 = I(15).I(4) =instruction[15].instruction[4]
+    And(a=instruction[15], b=instruction[4], out=writeD);
+    DRegister(in=out, load=writeD, out=x);
+
+//ALU with appropriate instruction bits as input
+    ALU(x=x, y=y ,zx=instruction[11] ,nx=instruction[10] ,zy=instruction[9], ny=instruction[8], f=instruction[7] ,no=instruction[6], out=out, zr=zr, ng=ng);
+
+//Assign the output of the ALU to the outM of CPU
+    Assignmentoperator16(in=out, out=outM);
+
+//Send 14 bits of ProgramCounter as the next instruction address
+    ProgramCounter(in=a2, instruction=instruction, zr=zr, ng=ng, r=reset, out[0..14]=pc);
+
+//writeM = I(15).d3 = I(15).I(3)
+    And(a=instruction[15], b=instruction[3], out=writeM);
+
+//Assign output of A register to addressM of CPU
+    Assignmentoperator16(in=a2, out[0..13]=addressM);
+}

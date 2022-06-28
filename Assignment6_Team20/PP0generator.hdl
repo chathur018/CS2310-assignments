@@ -1,0 +1,48 @@
+/*
+*PP0 = X.y[0].(2^0)
+*X represents entire x[8] bus
+*/
+
+CHIP PP0generator{
+    IN x[8],y;
+    OUT out[16];
+
+    PARTS:
+    
+    Not(in=y,out=noty);
+    And(a=y,out=nota,out=false);
+//false is a 0 bit    
+
+    And(a=x[0],b=y,out=x0);
+    And(a=x[1],b=y,out=x1);
+    And(a=x[2],b=y,out=x2);
+    And(a=x[3],b=y,out=x3);
+    And(a=x[4],b=y,out=x4);
+    And(a=x[5],b=y,out=x5);
+    And(a=x[6],b=y,out=x6);
+    And(a=x[7],b=y,out=x7);
+
+//x0,x1....x7 gets the value 0 if y[i]==0
+//else stores x[7] into variables x0,x1...x7
+//PP0 = X.y[0].(2^0)
+//shifting 0 units to the left
+
+    Assignmentoperator(in=x0,out=out[0]);
+    Assignmentoperator(in=x1,out=out[1]);
+    Assignmentoperator(in=x2,out=out[2]);
+    Assignmentoperator(in=x3,out=out[3]);
+    Assignmentoperator(in=x4,out=out[4]);
+    Assignmentoperator(in=x5,out=out[5]);
+    Assignmentoperator(in=x6,out=out[6]);
+    Assignmentoperator(in=x7,out=out[7]);
+
+//remaining bits as zero
+    Assignmentoperator(in=false,out=out[8]);
+    Assignmentoperator(in=false,out=out[9]);
+    Assignmentoperator(in=false,out=out[10]);
+    Assignmentoperator(in=false,out=out[11]);
+    Assignmentoperator(in=false,out=out[12]);
+    Assignmentoperator(in=false,out=out[13]);
+    Assignmentoperator(in=false,out=out[14]);
+    Assignmentoperator(in=false,out=out[15]);
+}

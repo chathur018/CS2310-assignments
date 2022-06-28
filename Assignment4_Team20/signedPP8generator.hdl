@@ -1,0 +1,37 @@
+/*
+*PP8 is simply PP8[16]=0000000000000001
+*It is generated to convert our PP7(which has been onescomplemented) to -PP7
+*/
+
+CHIP signedPP8generator{
+    IN y;
+    OUT out[16];
+
+    PARTS:
+    
+    Not(in=y,out=noty);
+    And(a=y,out=nota,out=false);
+    Not(in=false, out=true);
+//false is a 0 bit    
+//true is a 1 bit
+
+//out[1]....out[15] gets the value 0
+//out[0] gets the value 1 
+
+    Assignmentoperator(in=true,out=out[0]);
+    Assignmentoperator(in=false,out=out[1]);
+    Assignmentoperator(in=false,out=out[2]);
+    Assignmentoperator(in=false,out=out[3]);
+    Assignmentoperator(in=false,out=out[4]);
+    Assignmentoperator(in=false,out=out[5]);
+    Assignmentoperator(in=false,out=out[6]);
+    Assignmentoperator(in=false,out=out[7]);
+    Assignmentoperator(in=false,out=out[8]);
+    Assignmentoperator(in=false,out=out[9]);
+    Assignmentoperator(in=false,out=out[10]);
+    Assignmentoperator(in=false,out=out[11]);
+    Assignmentoperator(in=false,out=out[12]);
+    Assignmentoperator(in=false,out=out[13]);
+    Assignmentoperator(in=false,out=out[14]);
+    Assignmentoperator(in=false,out=out[15]);
+}

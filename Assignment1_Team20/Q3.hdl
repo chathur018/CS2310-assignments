@@ -1,0 +1,21 @@
+/**
+*4-to-2 priority encoder
+* x[3] x[2] x[1] x[0]	|   out[1]   out[0] 
+*  1    d    d    d	|     0        0
+*  0    1    d    d	|     0        1
+*  0    0    1    d	|     1	       0
+*  0    0    0    1	|     1        1
+*/
+CHIP Q3 {
+    IN x[4];
+    OUT out[2];
+    
+    PARTS:
+    Not(in=x[0], out=notx0);
+    Not(in=x[1], out=notx1);
+    Not(in=x[2], out=notx2);
+    Not(in=x[3], out=notx3);
+    And(a=notx3, b=notx2, out=out[1]);
+    Or(a=notx1, b=x[2], out=o1);
+    And(a=notx3, b=o1, out=out[0]);
+}

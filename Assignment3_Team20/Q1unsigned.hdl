@@ -1,0 +1,49 @@
+/**
+*
+*/
+
+CHIP Q1unsigned{
+    IN x0[16], x1[16], as;
+    OUT out[16], of;
+
+    PARTS:
+    Xor(a=x1[0], b=as, out=x20);
+    Xor(a=x1[1], b=as, out=x21);
+    Xor(a=x1[2], b=as, out=x22);
+    Xor(a=x1[3], b=as, out=x23);
+    Xor(a=x1[4], b=as, out=x24);
+    Xor(a=x1[5], b=as, out=x25);
+    Xor(a=x1[6], b=as, out=x26);
+    Xor(a=x1[7], b=as, out=x27);
+    Xor(a=x1[8], b=as, out=x28);
+    Xor(a=x1[9], b=as, out=x29);
+    Xor(a=x1[10], b=as, out=x210);
+    Xor(a=x1[11], b=as, out=x211);
+    Xor(a=x1[12], b=as, out=x212);
+    Xor(a=x1[13], b=as, out=x213);
+    Xor(a=x1[14], b=as, out=x214);
+    Xor(a=x1[15], b=as, out=x215);
+
+//FullAdder takes two input bits and a carry bit from the previous adder
+// and gives the sum of the bits and a carry bit for the next adder
+
+    FullAdder(x=x0[0], y=x20, cin=as, sum=out[0], cout=c1);
+    FullAdder(x=x0[1], y=x21, cin=c1, sum=out[1], cout=c2);
+    FullAdder(x=x0[2], y=x22, cin=c2, sum=out[2], cout=c3);
+    FullAdder(x=x0[3], y=x23, cin=c3, sum=out[3], cout=c4);
+    FullAdder(x=x0[4], y=x24, cin=c4, sum=out[4], cout=c5);
+    FullAdder(x=x0[5], y=x25, cin=c5, sum=out[5], cout=c6);
+    FullAdder(x=x0[6], y=x26, cin=c6, sum=out[6], cout=c7);
+    FullAdder(x=x0[7], y=x27, cin=c7, sum=out[7], cout=c8);
+    FullAdder(x=x0[8], y=x28, cin=c8, sum=out[8], cout=c9);
+    FullAdder(x=x0[9], y=x29, cin=c9, sum=out[9], cout=c10);
+    FullAdder(x=x0[10], y=x210, cin=c10, sum=out[10], cout=c11);
+    FullAdder(x=x0[11], y=x211, cin=c11, sum=out[11], cout=c12);
+    FullAdder(x=x0[12], y=x212, cin=c12, sum=out[12], cout=c13);
+    FullAdder(x=x0[13], y=x213, cin=c13, sum=out[13], cout=c14);
+    FullAdder(x=x0[14], y=x214, cin=c14, sum=out[14], cout=c15);
+    FullAdder(x=x0[15], y=x215, cin=c15, sum=out[15], cout=c16);
+
+    Not(in=as, out=nas);
+    And(a=nas, b=c16, out=of);
+}

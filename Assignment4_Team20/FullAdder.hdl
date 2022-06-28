@@ -1,0 +1,19 @@
+/**
+*Takes 3-bits and generates 1 sum-bit(sum) and 1 carry-bit(cout) 
+*/
+
+CHIP FullAdder{
+   IN x,y,cin;
+   OUT cout,sum;
+
+   PARTS:
+   And(a=x, b=y, out=o1);
+   And(a=x, b=cin, out=o2);
+   And(a=y, b=cin, out=o3);
+
+   Or(a=o1, b=o2, out=o4);
+   Or(a=o3, b=o4, out=cout);
+
+   Xor(a=x, b=y, out=o5);
+   Xor(a=o5, b=cin, out=sum);
+}

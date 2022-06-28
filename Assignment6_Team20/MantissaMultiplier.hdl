@@ -1,0 +1,23 @@
+/*
+*MantissaMultiplier
+*Takes two 7-bit mantissa(Xm and Ym) and gives the output mantissa(Zm)
+*It also gives the Pm15 bit as output(required in exponent calculation)
+*/
+
+CHIP MantissaMultiplier{
+    IN x[7], y[7];
+    OUT out[7], s15;
+
+    PARTS:
+
+//x[0]=true indicates 1 in 1.Xm and y[0]=true indicates 1 in 1.Ym
+//16-bit output is stored in variables m0,m1....m15 (denotes Pm)
+    MultiplierUnsigned(x[7]=true, x[0..6]=x, y[7]=true, y[0..6]=y, out[0]=m0, out[1]=m1, out[2]=m2, out[3]=m3, out[4]=m4, out[5]=m5, out[6]=m6, out[7]=m7, out[8]=m8, out[9]=m9, out[10]=m10, out[11]=m11, out[12]=m12, out[13]=m13, out[14]=m14, out[15]=m15);
+
+//based on m15 bit
+//if m15 = 1  --> (m14 to m8) bits taken as output
+//if m15 = 0  --> (m13 to m7) bits taken as output 
+    Mux7bit2to1(s=m15, x0[0]=m7, x0[1]=m8, x0[2]=m9, x0[3]=m10, x0[4]=m11, x0[5]=m12, x0[6]=m13, x1[0]=m8, x1[1]=m9, x1[2]=m10, x1[3]=m11, x1[4]=m12, x1[5]=m13, x1[6]=m14, out=out);
+
+    Assignmentoperator(in=m15, out=s15);
+}

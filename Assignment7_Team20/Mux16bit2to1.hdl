@@ -1,0 +1,84 @@
+/*
+*It takes two 16-bit buses and 1 select line
+*It gives a single 16-bit output based on select lines
+*/
+
+CHIP Mux16bit2to1{
+    IN s, x0[16], x1[16];
+    OUT out[16];
+
+    PARTS:
+
+    Not(in=s, out=nots);
+
+//output = s'.x0 + s.x1 (x0,x1 denote 8-bit buses)
+//output = a + b
+//where a represents a0=s'.x0[0], a1=s'.x0[1]....a15=s'.x0[7]
+//where b represents b0=s'.x1[0], b1=s'.x1[1]....b15=s'.x1[7]
+    And(a=nots, b=x0[0], out=a0);
+    And(a=s, b=x1[0], out=b0);
+
+    And(a=nots, b=x0[1], out=a1);
+    And(a=s, b=x1[1], out=b1);
+
+    And(a=nots, b=x0[2], out=a2);
+    And(a=s, b=x1[2], out=b2);
+
+    And(a=nots, b=x0[3], out=a3);
+    And(a=s, b=x1[3], out=b3);
+
+    And(a=nots, b=x0[4], out=a4);
+    And(a=s, b=x1[4], out=b4);
+
+    And(a=nots, b=x0[5], out=a5);
+    And(a=s, b=x1[5], out=b5);
+
+    And(a=nots, b=x0[6], out=a6);
+    And(a=s, b=x1[6], out=b6);
+
+    And(a=nots, b=x0[7], out=a7);
+    And(a=s, b=x1[7], out=b7);
+
+    And(a=nots, b=x0[8], out=a8);
+    And(a=s, b=x1[8], out=b8);
+
+    And(a=nots, b=x0[9], out=a9);
+    And(a=s, b=x1[9], out=b9);
+
+    And(a=nots, b=x0[10], out=a10);
+    And(a=s, b=x1[10], out=b10);
+
+    And(a=nots, b=x0[11], out=a11);
+    And(a=s, b=x1[11], out=b11);
+
+    And(a=nots, b=x0[12], out=a12);
+    And(a=s, b=x1[12], out=b12);
+
+    And(a=nots, b=x0[13], out=a13);
+    And(a=s, b=x1[13], out=b13);
+
+    And(a=nots, b=x0[14], out=a14);
+    And(a=s, b=x1[14], out=b14);
+
+    And(a=nots, b=x0[15], out=a15);
+    And(a=s, b=x1[15], out=b15);
+
+//output = a + b   (all are 8-bit buses)
+//out[i] = a_i + b_i (General output bit)
+    Or(a=a0, b=b0, out=out[0]);
+    Or(a=a1, b=b1, out=out[1]);
+    Or(a=a2, b=b2, out=out[2]);
+    Or(a=a3, b=b3, out=out[3]);
+    Or(a=a4, b=b4, out=out[4]);
+    Or(a=a5, b=b5, out=out[5]);
+    Or(a=a6, b=b6, out=out[6]);
+    Or(a=a7, b=b7, out=out[7]);
+    Or(a=a8, b=b8, out=out[8]);
+    Or(a=a9, b=b9, out=out[9]);
+    Or(a=a10, b=b10, out=out[10]);
+    Or(a=a11, b=b11, out=out[11]);
+    Or(a=a12, b=b12, out=out[12]);
+    Or(a=a13, b=b13, out=out[13]);
+    Or(a=a14, b=b14, out=out[14]);
+    Or(a=a15, b=b15, out=out[15]);
+}

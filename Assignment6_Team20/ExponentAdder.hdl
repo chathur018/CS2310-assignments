@@ -1,0 +1,31 @@
+/*
+*ExponentAdder
+*Takes two 8-bit exponents(Xe and Ye) and Pm15 bit(s15) 
+*/
+
+CHIP ExponentAdder{
+    IN x[8], y[8], s15;
+    OUT out[8];
+
+    PARTS:
+
+//sum = Xe + Ye   && c8 is the carry-bit 
+//a=false --> addition
+    CLAadder8bit(x0=x, y0=y, a=false, out=sum, c8=c8);
+
+//Bias=127 (000111111) it is represented by y0=(0 0111 1111)
+//out1 = (Xe+Ye)-Bias
+//out1 =   sum - y0
+//a = true --> subtraction
+    CLAadder9bit(x0[0..7]=sum, x0[8]=c8, y0[0]=true, y0[1]=true, y0[2]=true, y0[3]=true, y0[4]=true, y0[5]=true, y0[6]=true, y0[7]=false, y0[8]=false, a=true, out=out1);
+
+//Bias-1=126 (000111110) it is represented by y0=(0 0111 1110)
+//out2 = (Xe+Ye)-(Bias-1)
+//out2 =   sum - y0
+//a = true --> subtraction
+    CLAadder9bit(x0[0..7]=sum, x0[8]=c8, y0[0]=false, y0[1]=true, y0[2]=true, y0[3]=true, y0[4]=true, y0[5]=true, y0[6]=true, y0[7]=false, y0[8]=false, a=true, out=out2);
+
+//if s15 = 0 --> Ze = Xe + Ye - Bias     (out1)
+//if s15 = 1 --> Ze = Xe + Ye - (Bias-1) (out2)
+    Mux8bit2to1(s=s15, x0=out1, x1=out2, out=out);
+}

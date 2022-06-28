@@ -1,0 +1,21 @@
+/**
+*HACK Computer
+*/
+
+CHIP Computer {
+
+    IN reset;
+
+    PARTS:
+
+//HACK CPU (uses ALU and registers)
+    CPU(inM=inM, instruction=instruction, reset=reset, outM=outM, writeM=writeM, addressM=addressM, pc=pc);
+
+//Data Memory : 16K * 16-bit (RAM)
+//stores value of variables
+    RAM16K(in=outM, load=writeM, address=addressM, out=inM);
+
+//instruction memory : 32K * 16-bit (ROM)
+//stores instructions    
+    ROM32K(address=pc, out=instruction);
+}

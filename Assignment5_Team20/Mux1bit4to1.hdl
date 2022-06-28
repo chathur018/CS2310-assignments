@@ -1,0 +1,25 @@
+/**
+*
+*/
+
+CHIP Mux1bit4to1{
+    IN s[2], x0, x1, x2, x3;
+    OUT out;
+
+    PARTS:
+
+    Not(in=s[0], out=nots0);
+    Not(in=s[1], out=nots1);
+
+    And(a=nots0, b=nots1, out=o0);
+    And(a=s[0], b=nots1, out=o1);
+    And(a=nots0, b=s[1], out=o2);
+    And(a=s[0], b=s[1], out=o3);
+
+    And(a=o0, b=x0, out=a0);
+    And(a=o1, b=x1, out=a1);
+    And(a=o2, b=x2, out=a2);
+    And(a=o3, b=x3, out=a3);
+
+    Or4(a=a0, b=a1, c=a2, d=a3, out=out);
+}
