@@ -1,0 +1,62 @@
+/**
+*8-bit parity generator and parity checker
+*input x,y (8-bit)
+*output z=1 if 1-bit error
+*output z=0 if no error
+*We are checking for even number of ones
+*/
+
+CHIP Q5{
+    IN x0,x1,x2,x3,x4,x5,x6,x7,y0,y1,y2,y3,y4,y5,y6,y7;
+    OUT z;
+
+/* z = (x7@y7).(x6@y6).(x5@y5).(x4@y4).(x3@y3).(x2@y2).(x1@y1).(x0@y0) (@ is Xnor gate)
+   z = Not(Not((x7@y7).(x6@y6).(x5@y5).(x4@y4).(x3@y3).(x2@y2).(x1@y1).(x0@y0)))
+   z = Not((x7^y7)+(x6^y6)+(x5^y5)+(x4^y4)+(x3^y3)+(x2^y2)+(x1^y1)+(x0^y0))   (^ is Xor gate)
+   z = Not(z7 + z6 + z5 + z4 + z3 + z2 + z1 + z0)
+*/   
+   
+
+    PARTS:
+
+/*PG = (x7^x6)^(x5^x4)^(x3^x2)^(x1^x0)
+  PG = (a7 ^ a5) ^ (a3 ^ a1)
+  PG = c2 ^ c1
+*/
+    Xor(a=x0, b=x1, out=a1);
+    Xor(a=x2, b=x3, out=a3);
+    Xor(a=x4, b=x5, out=a5);
+    Xor(a=x6, b=x7, out=a7);
+
+    Xor(a=a1, b=a3, out=c1);
+    Xor(a=a5, b=a7, out=c2);
+
+    Xor(a=c1, b=c2, out=PG);
+
+//P = PG    
+    Not(in=PG, out=notPG);
+    Not(in=notPG, out=P);
+
+/*Z = (y7^y6)^(y5^y4)^(y3^y2)^(y1^y0)^P
+  Z = (b7 ^ b5) ^ (b3 ^ b1) ^ P
+  Z = (d2 ^ d1) ^ P
+  Z = d ^ P
+*/
+    Xor(a=y0, b=y1, out=b1);
+    Xor(a=y2, b=y3, out=b3);
+    Xor(a=y4, b=y5, out=b5);
+    Xor(a=y6, b=y7, out=b7);
+
+    Xor(a=b1, b=b3, out=d1);
+    Xor(a=b5, b=b7, out=d2);
+
+    Xor(a=d1, b=d2, out=d);
+
+    Xor(a=d, b=P, out=z);
+}
+
+
+
+
+
+

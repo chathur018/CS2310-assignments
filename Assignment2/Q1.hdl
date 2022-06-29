@@ -1,0 +1,47 @@
+/**
+*2-bit 4-to-1 multiplexer
+*m0,m1,m2,m3 represents the minterms for s0,s1
+*/
+
+CHIP Q1{
+    IN s0,s1,x00,x01,x10,x11,x20,x21,x30,x31;
+    OUT y0,y1;
+
+    PARTS:
+    Not(in=s0, out=nots0);
+    Not(in=s1, out=nots1);
+
+/*m0 = s1'.s0'
+  m1 = s1'.s0
+  m2 = s1'.s0'
+  m3 = s1.s0
+*/
+    And(a=nots0, b=nots1, out=m0);  
+    And(a=s0, b=nots1, out=m1);
+    And(a=nots0, b=s1, out=m2);
+    And(a=s0, b=s1, out=m3);
+
+//y1 = m0.x01 + m1.x11 + m2.x21 + m3.x31
+//y1 = (a0 + a1) + (a2 + a3)
+//y1 = b0 + b1
+    And(a=m0, b=x00, out=a0);
+    And(a=m1, b=x10, out=a1);
+    And(a=m2, b=x20, out=a2);
+    And(a=m3, b=x30, out=a3);
+
+    Or(a=a0, b=a1, out=b0);
+    Or(a=a2, b=a3, out=b1);
+    Or(a=b0, b=b1, out=y0);
+
+//y0 = m0.x00 + m1.x10 + m2.x20 + m3.x30
+//y0 = (a4 + a5) + (a6 + a7)
+//y0 = b2 + b3
+    And(a=m0, b=x01, out=a4);
+    And(a=m1, b=x11, out=a5);
+    And(a=m2, b=x21, out=a6);
+    And(a=m3, b=x31, out=a7);
+ 
+    Or(a=a4, b=a5, out=b2);
+    Or(a=a6, b=a7, out=b3);
+    Or(a=b2, b=b3, out=y1);
+}

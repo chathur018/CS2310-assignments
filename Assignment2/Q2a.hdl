@@ -1,0 +1,50 @@
+/**
+*2-bit 4-to-1 priority multiplexer
+*/
+CHIP Q2a {
+    IN r0, r1, r2, r3, x01, x00, x11, x10, x21, x20, x31, x30;
+    OUT y1, y0;
+    
+    PARTS:
+    Not(in=r0, out=notr0);
+    Not(in=r1, out=notr1);
+    Not(in=r2, out=notr2);
+    Not(in=r3, out=notr3);
+    And(a=notr0, b=notr1, out=s1);
+    Or(a=notr2, b=r1, out=o1);
+    And(a=notr0, b=o1, out=s0);
+
+//s1=r0'.r1'    s0=r0'.(r1+r2')
+
+    Not(in=s0, out=nots0);
+    Not(in=s1, out=nots1);
+    And(a=nots1, b=nots0, out=m0);
+    And(a=nots1, b=s0, out=m1); 
+    And(a=s1, b=nots0, out=m2);
+    And(a=s1, b=s0, out=m3);
+
+//m0=s1'.s0'   m1=s1'.s0   m2=s1.s0'   m3=s1.s0
+
+    And(a=m0, b=x01, out=v0);
+    And(a=m1, b=x11, out=v1);
+    And(a=m2, b=x21, out=v2);
+    And(a=m3, b=x31, out=v3);
+
+    And(a=m0, b=x00, out=w0);
+    And(a=m1, b=x10, out=w1);
+    And(a=m2, b=x20, out=w2);
+    And(a=m3, b=x30, out=w3);
+    
+    Or(a=v0, b=v1, out=f1);
+    Or(a=v2, b=v3, out=f2);
+    Or(a=f1, b=f2, out=y1);
+
+//y1=s1'.s0'.x01 + s1'.s0.x11 + s1.s0'.x21 + s1.s0.x31
+
+    Or(a=w0, b=w1, out=g1);
+    Or(a=w2, b=w3, out=g2);
+    Or(a=g1, b=g2, out=y0);
+
+//y0=s1'.s0'.x00 + s1'.s0.x10 + s1.s0'.x20 + s1.s0.x30
+
+}

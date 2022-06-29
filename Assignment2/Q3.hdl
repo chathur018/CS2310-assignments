@@ -1,0 +1,79 @@
+/**
+*2-bit 1-to-8 line Demux
+*we used the similar code like 3-to-8 bit decoder 
+*where 3-bit is s2,s1,s0 and minterms m0,m1,m2,m3,m4,m5,m6,m7
+*
+*/
+
+CHIP Q3{
+    IN x0, x1, s0, s1, s2;
+    OUT y00, y10, y20, y30, y40, y50, y60, y70, y01, y11, y21, y31, y41, y51, y61, y71;
+
+    PARTS:    
+    Not(in=s0, out=nots0);
+    Not(in=s1, out=nots1);
+    Not(in=s2, out=nots2);
+
+//m0 == s[0]'.s[1]'.s[2]' == (s[0]+s[1])'.s[2]' == o10'.s[2]' 
+    Or(a=s0, b=s1, out=o10);
+    Not(in=o10, out=noto10);
+    And(a=noto10, b=nots2, out=m0);
+
+//m1 == s[2]'.s[1]'.s[0] == (s[2]+s[1])'.s[0] == o11'.s[0]
+    Or(a=s1, b=s2, out=o11);
+    Not(in=o11, out=noto11);
+    And(a=noto11, b=s0, out=m1);
+
+//m2 == s[2]'.s[0]'.s[1] == (s[2]+s[0])'.s[1] == o12'.s[1]
+    Or(a=s0, b=s2, out=o12);
+    Not(in=o12, out=noto12);
+    And(a=noto12, b=s1, out=m2);
+
+//m3 == s[2]'.s[1].s[0] == s[2]'.(s[1].s[0]) == s[2]'.a13
+    And(a=s0, b=s1, out=a13);
+    And(a=a13, b=nots2, out=m3);
+
+//m4 == s[0]'.s[1]'.s[2] == (s[0]+s[1])'.s[2] == o14'.s[2]
+    Or(a=s0, b=s1, out=o14);
+    Not(in=o14, out=noto14);
+    And(a=noto14, b=s2, out=m4);
+
+//m5 == s[1]'.s[2].s[0] == s[1]'.(s[2].s[0]) == s[2]'.a15
+    And(a=s0, b=s2, out=a15);
+    And(a=a15, b=nots1, out=m5);
+
+//m6 == s[0]'.s[1].s[2] == s[0]'.(s[1].s[2]) == s[0]'.a16
+    And(a=s1, b=s2, out=a16);
+    And(a=a16, b=nots0, out=m6);
+
+//m7 == s[0].s[1].s[2] == s[0].(s[1].s[2]) == s[0].a17
+    And(a=s1, b=s2, out=a17);
+    And(a=a17, b=s0, out=m7);
+
+/*y00 = m0.x0             y01 = m0.x1
+  y10 = m1.x0             y11 = m1.x1
+  y20 = m2.x0             y21 = m2.x1
+  y30 = m3.x0             y31 = m3.x1
+  y40 = m4.x0             y41 = m4.x1
+  y50 = m5.x0             y51 = m5.x1
+  y60 = m6.x0             y61 = m6.x1
+  y70 = m7.x0             y71 = m7.x1
+*/
+    And(a=m0, b=x0, out=y00);
+    And(a=m1, b=x0, out=y10);
+    And(a=m2, b=x0, out=y20);
+    And(a=m3, b=x0, out=y30);
+    And(a=m4, b=x0, out=y40);
+    And(a=m5, b=x0, out=y50);
+    And(a=m6, b=x0, out=y60);
+    And(a=m7, b=x0, out=y70);
+
+    And(a=m0, b=x1, out=y01);
+    And(a=m1, b=x1, out=y11);
+    And(a=m2, b=x1, out=y21);
+    And(a=m3, b=x1, out=y31);
+    And(a=m4, b=x1, out=y41);
+    And(a=m5, b=x1, out=y51);
+    And(a=m6, b=x1, out=y61);
+    And(a=m7, b=x1, out=y71);
+}
